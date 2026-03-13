@@ -2,6 +2,7 @@ import pandas as pd
 import paho.mqtt.client as mqtt
 import joblib
 from statistics import mode
+import numpy as np
 
 broker = "test.mosquitto.org"
 PORT = 1883
@@ -43,6 +44,8 @@ def evaluate(data):
     df=pd.DataFrame(data,columns=['footfall','tempMode','AQ','USS','CS','VOC','RP','IP','Temperature'])
     df_scaled = scaler.transform(df)
     prediction = model.predict(df_scaled)
+    probability = model.predict_proba(df_scaled)
+    final_prediction=np.mean(prediction,axis=0)
     final_prediction = mode(prediction)
     
     print("Final Prediction:", final_prediction)
