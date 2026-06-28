@@ -1,151 +1,212 @@
-Real-Time Machine Failure Prediction System
+# Real-Time Machine Failure Prediction System
 
-C++ | MQTT | Python | Logistic Regression
+> **A real-time industrial machine failure prediction system built using C++, MQTT, Python, and Machine Learning.**
 
-1. Project Overview
+## Overview
 
-  - This project implements a real-time predictive maintenance system that simulates industrial sensor data using C++ and performs machine failure prediction using a Logistic Regression model in Python.
+This project demonstrates an end-to-end predictive maintenance pipeline that simulates industrial IoT sensor data, streams it using MQTT, performs real-time machine failure prediction with a Logistic Regression model, and visualizes the results through a modern Streamlit dashboard.
 
-  - Due to the absence of a real industrial hardware environment, sensor readings are simulated using a shuffled and modified dataset. The system mimics real-time IoT data streaming via MQTT and processes incoming batches for failure prediction.
+The objective is to showcase how machine learning can be integrated with software systems to monitor industrial equipment in real time.
 
-2. Target Industrial Use Case
+---
 
-    - The dataset aligns with a Smart Industrial HVAC and Environmental Control Unit (Air Handling Unit - AHU) deployed in:
+## Key Features
 
-    - Smart factories
+* Real-time sensor simulation using C++
+* MQTT-based publish/subscribe communication
+* Machine Learning inference using Logistic Regression
+* StandardScaler preprocessing pipeline
+* Batch-based prediction using Majority Voting
+* Live industrial monitoring dashboard built with Streamlit
+* Modular architecture with a shared inference engine
+* Relative-path project structure for portability
+* One-click project launcher using batch scripts
 
-    - Semiconductor manufacturing facilities
+---
 
-    - Pharmaceutical clean rooms
+## Architecture
 
-    - Large industrial production environments
+```text
+                C++ Sensor Simulator
+                         │
+                         ▼
+                  MQTT (HiveMQ)
+                         │
+                         ▼
+                Python Inference Engine
+        (Scaling + Logistic Regression)
+                         │
+                         ▼
+            Shared Inference Module
+                         │
+          ┌──────────────┴──────────────┐
+          ▼                             ▼
+   MQTT Subscriber              Streamlit Dashboard
+```
 
-    - The system monitors environmental and operational parameters and predicts potential failure conditions.
+---
 
-3. System Architecture
-    3.1 Sensor Simulation (C++ Publisher)
+## Dashboard
 
-        Reads 6 lines from a CSV file every 6 seconds
+The dashboard provides:
 
-        Writes the 6 lines into a temporary CSV file
+* Live MQTT monitoring
+* Machine health prediction
+* Prediction confidence
+* Live sensor visualization
+* Prediction history
+* Model evaluation metrics
+* Confusion Matrix
+* ROC Curve
+* Feature Importance
+* System architecture overview
 
-        Converts the readings into a stream buffer
+---
 
-        Publishes the data using MQTT
+## Machine Learning Pipeline
 
-        Uses HiveMQ as the MQTT broker
+Model:
 
-        This simulates real-time industrial sensor transmission.
+* Logistic Regression
 
-    3.2 Data Transmission Layer
+Preprocessing:
 
-        Protocol: MQTT
+* StandardScaler
 
-        Broker: HiveMQ
+Inference:
 
-        Communication: Topic-based publish-subscribe architecture
-        
-    3.3 Machine Learning Prediction (Python Subscriber)
+* Batch prediction
+* Majority Voting (Mode)
 
-        Upon receiving 6 sensor readings:
+Output:
 
-        Converts the incoming data into a Pandas DataFrame
+* **0** → Normal Operation
+* **1** → Machine Failure
 
-        Adds required column structure
+---
 
-        Applies StandardScaler (fitted during training)
+## Dataset
 
-        Performs prediction using a trained Logistic Regression model
+Since real industrial hardware was unavailable, this project uses a shuffled and modified dataset to simulate real-time industrial sensor streams.
 
-        Applies Majority Voting (mode) across 6 predictions
+Features include:
 
-        Final Output:
+* Footfall
+* Temperature Mode
+* Air Quality
+* Ultrasonic Sensor
+* Current Sensor
+* VOC
+* Rotational Parameter
+* Input Parameter
+* Temperature
 
-        0 → Machine operating normally
+Target:
 
-        1 → Machine failure detected
+* **fail**
 
-        If the majority of predictions are 1, a failure condition is triggered.
-    
-4. Machine Learning Model
+  * 0 → Normal
+  * 1 → Failure
 
-    Algorithm: Logistic Regression
+---
 
-    Feature Scaling: StandardScaler
+## Tech Stack
 
-    Voting Mechanism: Majority Voting (Mode)
+### Languages
 
-    Training Data: Shuffled and modified dataset simulating industrial conditions
+* C++
+* Python
 
-5. Dataset Structure
+### Libraries
 
-    Example sample:
+* Pandas
+* NumPy
+* Scikit-learn
+* Plotly
+* Streamlit
+* Paho MQTT
 
-    footfall,tempMode,AQ,USS,CS,VOC,RP,IP,Temperature,fail
-    190,1,3,3,5,1,20,4,1,0
-    31,7,2,2,6,1,24,6,1,0
-    640,7,5,6,4,0,68,6,1,0
+### Communication
 
-    Feature Description (Simulated)
+* MQTT
+* HiveMQ Broker
 
-    footfall – Operational load indicator
+---
 
-    tempMode – Operating mode
+## Project Structure
 
-    AQ – Air quality index
+```text
+Machine_failure_detection/
 
-    USS – Ultrasonic sensor reading
+├── mqtt_c++/
+├── python/
+│   ├── dashboard/
+│   ├── inference/
+│   ├── mqtt/
+│   └── model/
+├── requirements.txt
+├── setup.bat
+├── run_dashboard.bat
+├── run_publisher.bat
+└── run_project.bat
+```
 
-    CS – Current sensor value
+---
 
-    VOC – Volatile organic compound level
+## Getting Started
 
-    RP – Rotational parameter
+### 1. Clone the repository
 
-    IP – Input parameter / pressure
+```bash
+git clone <repository-url>
+cd Machine_failure_detection
+```
 
-    Temperature – System temperature
+### 2. Install dependencies
 
-    fail – Target variable (0 = No Failure, 1 = Failure)
+Run:
 
-6. Tech Stack
+```text
+setup.bat
+```
 
-    C++ (Sensor simulation & MQTT publisher)
+This creates a virtual environment and installs all required packages.
 
-    Python (ML model & subscriber)
+---
 
-    Pandas
+### 3. Start the project
 
-    Scikit-learn
+Run:
 
-    MQTT (HiveMQ broker)
+```text
+run_project.bat
+```
 
-    CSV-based simulation
+This automatically:
 
-7. Execution Flow
+* Starts the Streamlit dashboard
+* Launches the MQTT publisher
+* Opens the dashboard in your browser
 
-    Train the Logistic Regression model in Python
+---
 
-    Start MQTT broker (HiveMQ)
+## Future Improvements
 
-    Run C++ publisher to simulate sensor readings
+* Support real industrial IoT devices
+* Local MQTT broker deployment
+* Docker support
+* REST API using FastAPI
+* Advanced anomaly detection models
+* Deep Learning-based failure prediction
+* Cloud deployment
+* Real-time alert system
 
-    Run Python subscriber
+---
 
-    Observe real-time batch-based failure prediction
+## Author
 
-8. Future Improvements
+**Aryan**
 
-    Deploy model using REST API (Flask/FastAPI)
+B.Tech Computer Science Engineering
 
-    Integrate real IoT sensor hardware
-
-    Add real-time dashboard visualization
-
-    Implement anomaly detection models
-
-
-9. Author
-
-    Aryan
-    B.Tech Computer Science Engineering
+Interested in Machine Learning, Software Engineering, Industrial AI, and Intelligent IoT Systems.
